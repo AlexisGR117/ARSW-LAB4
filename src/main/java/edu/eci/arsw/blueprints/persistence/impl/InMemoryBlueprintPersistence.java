@@ -10,13 +10,17 @@ import edu.eci.arsw.blueprints.model.Point;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.persistence.BlueprintsPersistence;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author hcadavid
  */
+@Service
 public class InMemoryBlueprintPersistence implements BlueprintsPersistence {
 
     private final Map<Tuple<String, String>, Blueprint> blueprints = new HashMap<>();
@@ -32,7 +36,7 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence {
     @Override
     public void saveBlueprint(Blueprint bp) throws BlueprintPersistenceException {
         if (blueprints.containsKey(new Tuple<>(bp.getAuthor(), bp.getName()))) {
-            throw new BlueprintPersistenceException("The given blueprint already exists: " + bp);
+            throw new BlueprintPersistenceException(BlueprintPersistenceException.EXISTING_BLUEPRINT + bp);
         } else {
             blueprints.put(new Tuple<>(bp.getAuthor(), bp.getName()), bp);
         }
@@ -41,9 +45,25 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence {
     @Override
     public Blueprint getBlueprint(String author, String bprintname) throws BlueprintNotFoundException {
         Blueprint blueprint = blueprints.get(new Tuple<>(author, bprintname));
-        if (blueprint == null) throw new BlueprintNotFoundException("No such blueprint.");
+        if (blueprint == null) throw new BlueprintNotFoundException(BlueprintNotFoundException.BLUEPRINT_NOT_FOUND);
         return blueprint;
     }
 
+    @Override
+    public Set<Blueprint> getBlueprintByAuthor(String author) throws BlueprintNotFoundException {
+        Set<Blueprint> bluePrintAuthor = new HashSet<>();
+        blueprints.forEach((key, value) -> {
+            if (key.getElem1().equals(author)) {
+                bluePrintAuthor.add(value);
+            }
+        });
+        if (bluePrintAuthor.size() == 0)
+            throw new BlueprintNotFoundException(BlueprintNotFoundException.AUTHOR_NOT_FOUND);
+        return bluePrintAuthor;
+    }
 
+    @Override
+    public Set<Blueprint> getAllBlueprints() {
+        return new HashSet<>(blueprints.values());
+    }
 }

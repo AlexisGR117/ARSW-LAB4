@@ -9,6 +9,7 @@ import edu.eci.arsw.blueprints.model.Blueprint;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.persistence.BlueprintsPersistence;
+import edu.eci.arsw.blueprints.persistence.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +23,15 @@ public class BlueprintsServices {
 
     @Autowired
     BlueprintsPersistence bpp = null;
+    @Autowired
+    Filter filter;
 
     public void addNewBlueprint(Blueprint bp) throws BlueprintPersistenceException {
         bpp.saveBlueprint(bp);
     }
 
     public Set<Blueprint> getAllBlueprints() {
-        return bpp.;
+        return filter.filterBlueprints(bpp.getAllBlueprints());
     }
 
     /**
@@ -38,7 +41,7 @@ public class BlueprintsServices {
      * @throws BlueprintNotFoundException if there is no such blueprint
      */
     public Blueprint getBlueprint(String author, String name) throws BlueprintNotFoundException {
-        return bpp.getBlueprint(author, name);
+        return filter.filterBlueprint(bpp.getBlueprint(author, name));
     }
 
     /**
@@ -47,7 +50,6 @@ public class BlueprintsServices {
      * @throws BlueprintNotFoundException if the given author doesn't exist
      */
     public Set<Blueprint> getBlueprintsByAuthor(String author) throws BlueprintNotFoundException {
-        return null;
+        return filter.filterBlueprints(bpp.getBlueprintByAuthor(author));
     }
-
 }

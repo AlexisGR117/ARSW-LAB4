@@ -6,10 +6,12 @@
 package edu.eci.arsw.blueprints.persistence;
 
 /**
- *
  * @author hcadavid
  */
-public class BlueprintNotFoundException extends Exception{
+public class BlueprintNotFoundException extends Exception {
+
+    public static final String AUTHOR_NOT_FOUND = "The given author doesn't exist.";
+    public static final String BLUEPRINT_NOT_FOUND = "No such blueprint.";
 
     public BlueprintNotFoundException(String message) {
         super(message);
@@ -18,5 +20,5 @@ public class BlueprintNotFoundException extends Exception{
     public BlueprintNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
 }
